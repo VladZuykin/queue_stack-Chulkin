@@ -56,6 +56,9 @@ std::ostream& operator <<(std::ostream& stream, const OneLinkedList<T>& lst)
 }
 
 
+// Stack class//
+//////////////////////////////////////////////
+
 template <class T>
 class Stack: public OneLinkedList<T>
 {
@@ -77,7 +80,8 @@ protected:
     typename OneLinkedList<T>::Node *head;
 };
 
-// Constructors and operators //
+// Stack constructors and operators //
+//////////////////////////////////////////////
 
 template <class T>
 Stack<T>::Stack()
@@ -131,8 +135,8 @@ Stack<T>::Stack(Stack&& other)
 template <class T>
 Stack<T>& Stack<T>::operator =(const Stack<T>& other)
 {
-    if(this = &other)
-        return this;
+    if(this == &other)
+        return *this;
 
     if(other.IsEmpty())
     {
@@ -140,7 +144,7 @@ Stack<T>& Stack<T>::operator =(const Stack<T>& other)
         {
             this->Pop();
         }
-        return this;
+        return *this;
     }
 
     if(!this->head)
@@ -157,7 +161,7 @@ Stack<T>& Stack<T>::operator =(const Stack<T>& other)
 
     if(!src_node->next && tmp_node->next)
     {
-        typename OneLinkedList<T>::Node tmp_node2 = tmp_node->next;
+        typename OneLinkedList<T>::Node* tmp_node2 = tmp_node->next;
         tmp_node->next = nullptr;
 
         while(tmp_node2)
@@ -179,7 +183,7 @@ Stack<T>& Stack<T>::operator =(const Stack<T>& other)
         while(src_node->next);
         tmp_node->next = nullptr;
     }
-    return this;
+    return *this;
 }
 
 template <class T>
@@ -187,9 +191,11 @@ Stack<T>& Stack<T>::operator =(Stack<T>&& other)
 {
     this->head = other.head;
     other.head = nullptr;
+    return *this;
 }
 
-// Methods //
+// Stack methods //
+//////////////////////////////////////////////
 
 template <class T>
 void Stack<T>::Print() const
@@ -202,11 +208,7 @@ void Stack<T>::Print() const
             std::cout << ptr->value << " ";
         }
         std::cout << ptr->value;
-    }
-    else
-    {
-        std::cout << " ";
-    }
+    };
 }
 
 template <class T>
@@ -251,11 +253,235 @@ size_t Stack<T>::Size() const
 {
     size_t i = 0;
     for(typename OneLinkedList<T>::Node* node = this->head;
-        node;
-        node = node->next, ++i);
+            node;
+            node = node->next, ++i);
     return i;
 }
 
+// Queue class //
+//////////////////////////////////////////////
+
+template <class T>
+class Queue: public OneLinkedList<T>
+{
+public:
+    Queue();
+    ~Queue();
+    Queue(const Queue& other);
+    Queue(Queue&& other);
+    Queue<T>& operator =(const Queue<T>& other);
+    Queue<T>& operator =(Queue<T>&& other);
+
+    void Push(const T);
+    T Pop();
+    T GetFront() const;
+    bool IsEmpty() const;
+    size_t Size() const;
+
+protected:
+    void Print() const;
+    typename OneLinkedList<T>::Node *head, *tail;
+};
+
+// Queue constructors and operators //
+//////////////////////////////////////////////
+
+template <class T>
+Queue<T>::Queue()
+{
+    this->head = nullptr;
+    this->tail = nullptr;
+}
+
+template <class T>
+Queue<T>::~Queue()
+{
+    while(!this->IsEmpty())
+    {
+        this->Pop();
+    }
+}
+
+template <class T>
+Queue<T>::Queue(const Queue& other)
+{
+    if(other.IsEmpty())
+    {
+        this->head = nullptr;
+        this->tail = nullptr;
+        return;
+    }
+
+    this->head = new typename OneLinkedList<T>::Node;
+    typename OneLinkedList<T>::Node* src_node = other.head;
+    this->head->value = src_node->value;
+    this->head->next = nullptr;
+
+    typename OneLinkedList<T>::Node* tmp_node = this->head;
+    for(;
+            src_node->next;
+            tmp_node = tmp_node->next, src_node = src_node->next)
+    {
+        tmp_node->next = new typename OneLinkedList<T>::Node;
+        tmp_node = tmp_node->next;
+        src_node = src_node->next;
+
+        tmp_node->value = src_node->value;
+        tmp_node->next = nullptr;
+    }
+    this->tail = tmp_node;
+}
+
+template <class T>
+Queue<T>::Queue(Queue&& other)
+{
+    this->head = other.head;
+    this->tail = other.tail;
+    other.head = nullptr;
+}
+
+template <class T>
+Queue<T>& Queue<T>::operator =(const Queue<T>& other)
+{
+    if(this == &other)
+        return *this;
+
+    if(other.IsEmpty())
+    {
+        while(!this->IsEmpty())
+        {
+            this->Pop();
+        }
+        return *this;
+    }
+
+    if(!this->head)
+    {
+        this->head = new typename OneLinkedList<T>::Node;
+        this->head->value = other.head->value;
+    }
+
+    typename OneLinkedList<T>::Node* tmp_node = this->head;
+    typename OneLinkedList<T>::Node* src_node = other.head;
+    for(; src_node->next && tmp_node->next; src_node = src_node->next, tmp_node = tmp_node->next)
+        tmp_node->value = src_node->value;
+    tmp_node->value = src_node->value;
+    this->tail = tmp_node;
+
+    if(!src_node->next && tmp_node->next)
+    {
+        typename OneLinkedList<T>::Node* tmp_node2 = tmp_node->next;
+        tmp_node->next = nullptr;
+        while(tmp_node2)
+        {
+            tmp_node = tmp_node2->next;
+            delete tmp_node2;
+            tmp_node2 = tmp_node;
+        }
+    }
+    else if(src_node->next && !tmp_node->next)
+    {
+        do
+        {
+            tmp_node->next = new typename OneLinkedList<T>::Node;
+            tmp_node = tmp_node->next;
+            src_node = src_node->next;
+            tmp_node->value = src_node->value;
+        }
+        while(src_node->next);
+        this->tail = tmp_node;
+        tmp_node->next = nullptr;
+    }
+    return *this;
+}
+
+template <class T>
+Queue<T>& Queue<T>::operator =(Queue<T>&& other)
+{
+    this->head = other.head;
+    this->tail = other.tail;
+    other.head = nullptr;
+    *this;
+}
+
+// Queue methods //
+//////////////////////////////////////////////
+
+template <class T>
+void Queue<T>::Push(const T value)
+{
+    if(this->head)
+    {
+        this->tail->next = new typename OneLinkedList<T>::Node;
+        this->tail = this->tail->next;
+    }
+    else
+    {
+        this->head = new typename OneLinkedList<T>::Node;
+        this->tail = this->head;
+    }
+    this->tail->value = value;
+    this->tail->next = nullptr;
+}
+
+template <class T>
+T Queue<T>::Pop()
+{
+    if(this->IsEmpty())
+        throw std::length_error("There is no elements in stack.");
+
+    T res = this->head->value;
+    if(this->head == this->tail)
+    {
+        this->head = nullptr;
+        this->tail = nullptr;
+        return res;
+    }
+
+    typename OneLinkedList<T>::Node* tmp_ptr;
+    tmp_ptr = this->head->next;
+    delete this->head;
+    this->head = tmp_ptr;
+    return res;
+}
+
+template <class T>
+T Queue<T>::GetFront() const
+{
+    if(this->IsEmpty())
+        throw std::length_error("There is no elements in stack.");
+    return this->head->value;
+}
+
+template <class T>
+bool Queue<T>::IsEmpty() const
+{
+    return !this->head;
+}
+
+template <class T>
+size_t Queue<T>::Size() const
+{
+    size_t i = 0;
+    for(typename OneLinkedList<T>::Node* node = this->head;
+            node;
+            node = node->next, ++i);
+    return i;
+}
+
+template <class T>
+void Queue<T>::Print() const
+{
+    if (this->head)
+    {
+        typename OneLinkedList<T>::Node* ptr = this->head;
+        for(; ptr->next; ptr = ptr->next)
+        {
+            std::cout << ptr->value << " ";
+        }
+        std::cout << ptr->value;
+    };
+}
 
 
 
