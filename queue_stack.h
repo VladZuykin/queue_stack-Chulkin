@@ -9,6 +9,8 @@ template <class T>
 class OneLinkedList
 {
 public:
+    virtual ~OneLinkedList() {};
+
     virtual void Push(const T) = 0;
     virtual T Pop() = 0;
     virtual T GetFront() const = 0;
@@ -95,7 +97,7 @@ Stack<T>::~Stack()
     while(!this->IsEmpty())
     {
         this->Pop();
-    }
+    };
 }
 
 template <class T>
