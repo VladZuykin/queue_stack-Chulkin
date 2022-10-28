@@ -114,17 +114,16 @@ Stack<T>::Stack(const Stack& other)
     this->head->value = src_node->value;
     this->head->next = nullptr;
 
-    for(typename OneLinkedList<T>::Node* tmp_node = this->head;
-            src_node->next;
-            tmp_node = tmp_node->next, src_node = src_node->next)
+    typename OneLinkedList<T>::Node* tmp_node = this->head;
+    for(;src_node->next;)
     {
         tmp_node->next = new typename OneLinkedList<T>::Node;
         tmp_node = tmp_node->next;
         src_node = src_node->next;
 
         tmp_node->value = src_node->value;
-        tmp_node->next = nullptr;
     }
+    tmp_node->next = nullptr;
 }
 
 template <class T>
@@ -307,6 +306,8 @@ Queue<T>::~Queue()
 template <class T>
 Queue<T>::Queue(const Queue& other)
 {
+    std::cout << "1";
+    std::cout << "1";
     if(other.IsEmpty())
     {
         this->head = nullptr;
@@ -320,17 +321,15 @@ Queue<T>::Queue(const Queue& other)
     this->head->next = nullptr;
 
     typename OneLinkedList<T>::Node* tmp_node = this->head;
-    for(;
-            src_node->next;
-            tmp_node = tmp_node->next, src_node = src_node->next)
+    for(;src_node->next;)
     {
         tmp_node->next = new typename OneLinkedList<T>::Node;
         tmp_node = tmp_node->next;
         src_node = src_node->next;
 
         tmp_node->value = src_node->value;
-        tmp_node->next = nullptr;
     }
+    tmp_node->next = nullptr;
     this->tail = tmp_node;
 }
 
@@ -435,6 +434,7 @@ T Queue<T>::Pop()
     T res = this->head->value;
     if(this->head == this->tail)
     {
+        delete this->head;
         this->head = nullptr;
         this->tail = nullptr;
         return res;
