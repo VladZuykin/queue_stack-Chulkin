@@ -16,8 +16,6 @@ public:
     virtual T GetFront() const = 0;
     virtual bool IsEmpty() const = 0;
     virtual size_t Size() const = 0;
-//    virtual OneLinkedList<T>& operator =(const OneLinkedList<T>& other) = 0;
-//    virtual OneLinkedList<T>& operator =(OneLinkedList<T>&& other) = 0;
 
     template<class F> friend std::istream& operator >>(std::istream& stream, OneLinkedList<F>& lst);
     template<class F> friend std::ostream& operator <<(std::ostream& stream, const OneLinkedList<F>& lst);
@@ -80,6 +78,8 @@ public:
 protected:
     void Print() const;
     typename OneLinkedList<T>::Node *head;
+private:
+    void CopyFromOther(const Stack<T>& other);
 };
 
 // Stack constructors and operators //
@@ -98,10 +98,11 @@ Stack<T>::~Stack()
     {
         this->Pop();
     };
+    this->head = nullptr;
 }
 
 template <class T>
-Stack<T>::Stack(const Stack& other)
+void Stack<T>::CopyFromOther(const Stack& other)
 {
     if(other.IsEmpty())
     {
@@ -112,10 +113,9 @@ Stack<T>::Stack(const Stack& other)
     this->head = new typename OneLinkedList<T>::Node;
     typename OneLinkedList<T>::Node* src_node = other.head;
     this->head->value = src_node->value;
-    this->head->next = nullptr;
 
     typename OneLinkedList<T>::Node* tmp_node = this->head;
-    for(;src_node->next;)
+    for(; src_node->next;)
     {
         tmp_node->next = new typename OneLinkedList<T>::Node;
         tmp_node = tmp_node->next;
@@ -124,6 +124,12 @@ Stack<T>::Stack(const Stack& other)
         tmp_node->value = src_node->value;
     }
     tmp_node->next = nullptr;
+}
+
+template <class T>
+Stack<T>::Stack(const Stack& other)
+{
+    this->CopyFromOther(other);
 }
 
 template <class T>
@@ -139,57 +145,15 @@ Stack<T>& Stack<T>::operator =(const Stack<T>& other)
     if(this == &other)
         return *this;
 
-    if(other.IsEmpty())
-    {
-        while(!this->IsEmpty())
-        {
-            this->Pop();
-        }
-        return *this;
-    }
-
-    if(!this->head)
-    {
-        this->head = new typename OneLinkedList<T>::Node;
-        this->head->value = other.head->value;
-    }
-
-    typename OneLinkedList<T>::Node* tmp_node = this->head;
-    typename OneLinkedList<T>::Node* src_node = other.head;
-    for(; src_node->next && tmp_node->next; src_node = src_node->next, tmp_node = tmp_node->next)
-        tmp_node->value = src_node->value;
-    tmp_node->value = src_node->value;
-
-    if(!src_node->next && tmp_node->next)
-    {
-        typename OneLinkedList<T>::Node* tmp_node2 = tmp_node->next;
-        tmp_node->next = nullptr;
-
-        while(tmp_node2)
-        {
-            tmp_node = tmp_node2->next;
-            delete tmp_node2;
-            tmp_node2 = tmp_node;
-        }
-    }
-    else if(src_node->next && !tmp_node->next)
-    {
-        do
-        {
-            tmp_node->next = new typename OneLinkedList<T>::Node;
-            tmp_node = tmp_node->next;
-            src_node = src_node->next;
-            tmp_node->value = src_node->value;
-        }
-        while(src_node->next);
-        tmp_node->next = nullptr;
-    }
+    this->~Stack();
+    this->CopyFromOther(other);
     return *this;
 }
 
 template <class T>
 Stack<T>& Stack<T>::operator =(Stack<T>&& other)
 {
+    this->~Stack();
     this->head = other.head;
     other.head = nullptr;
     return *this;
@@ -203,6 +167,7 @@ void Stack<T>::Print() const
 {
     if (this->head)
     {
+
         typename OneLinkedList<T>::Node* ptr = this->head;
         for(; ptr->next; ptr = ptr->next)
         {
@@ -253,9 +218,7 @@ template <class T>
 size_t Stack<T>::Size() const
 {
     size_t i = 0;
-    for(typename OneLinkedList<T>::Node* node = this->head;
-            node;
-            node = node->next, ++i);
+    for(typename OneLinkedList<T>::Node* node = this->head; node; node = node->next, ++i);
     return i;
 }
 
@@ -282,6 +245,9 @@ public:
 protected:
     void Print() const;
     typename OneLinkedList<T>::Node *head, *tail;
+
+private:
+    void CopyFromOther(const Queue& other);
 };
 
 // Queue constructors and operators //
@@ -301,13 +267,13 @@ Queue<T>::~Queue()
     {
         this->Pop();
     }
+    this->head = nullptr;
+    this->tail = nullptr;
 }
 
 template <class T>
-Queue<T>::Queue(const Queue& other)
+void Queue<T>::CopyFromOther(const Queue& other)
 {
-    std::cout << "1";
-    std::cout << "1";
     if(other.IsEmpty())
     {
         this->head = nullptr;
@@ -318,10 +284,9 @@ Queue<T>::Queue(const Queue& other)
     this->head = new typename OneLinkedList<T>::Node;
     typename OneLinkedList<T>::Node* src_node = other.head;
     this->head->value = src_node->value;
-    this->head->next = nullptr;
 
     typename OneLinkedList<T>::Node* tmp_node = this->head;
-    for(;src_node->next;)
+    for(; src_node->next;)
     {
         tmp_node->next = new typename OneLinkedList<T>::Node;
         tmp_node = tmp_node->next;
@@ -331,6 +296,12 @@ Queue<T>::Queue(const Queue& other)
     }
     tmp_node->next = nullptr;
     this->tail = tmp_node;
+}
+
+template <class T>
+Queue<T>::Queue(const Queue& other)
+{
+    this->CopyFromOther(other);
 }
 
 template <class T>
@@ -347,62 +318,20 @@ Queue<T>& Queue<T>::operator =(const Queue<T>& other)
     if(this == &other)
         return *this;
 
-    if(other.IsEmpty())
-    {
-        while(!this->IsEmpty())
-        {
-            this->Pop();
-        }
-        return *this;
-    }
-
-    if(!this->head)
-    {
-        this->head = new typename OneLinkedList<T>::Node;
-        this->head->value = other.head->value;
-    }
-
-    typename OneLinkedList<T>::Node* tmp_node = this->head;
-    typename OneLinkedList<T>::Node* src_node = other.head;
-    for(; src_node->next && tmp_node->next; src_node = src_node->next, tmp_node = tmp_node->next)
-        tmp_node->value = src_node->value;
-    tmp_node->value = src_node->value;
-    this->tail = tmp_node;
-
-    if(!src_node->next && tmp_node->next)
-    {
-        typename OneLinkedList<T>::Node* tmp_node2 = tmp_node->next;
-        tmp_node->next = nullptr;
-        while(tmp_node2)
-        {
-            tmp_node = tmp_node2->next;
-            delete tmp_node2;
-            tmp_node2 = tmp_node;
-        }
-    }
-    else if(src_node->next && !tmp_node->next)
-    {
-        do
-        {
-            tmp_node->next = new typename OneLinkedList<T>::Node;
-            tmp_node = tmp_node->next;
-            src_node = src_node->next;
-            tmp_node->value = src_node->value;
-        }
-        while(src_node->next);
-        this->tail = tmp_node;
-        tmp_node->next = nullptr;
-    }
+    this->~Queue();
+    this->CopyFromOther(other);
     return *this;
 }
 
 template <class T>
 Queue<T>& Queue<T>::operator =(Queue<T>&& other)
 {
+    this->~Queue();
     this->head = other.head;
     this->tail = other.tail;
     other.head = nullptr;
-    *this;
+    other.tail = nullptr;
+    return *this;
 }
 
 // Queue methods //

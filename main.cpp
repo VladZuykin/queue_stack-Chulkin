@@ -6,40 +6,43 @@ using namespace std;
 int main()
 {
 
-        Stack<int> stack = Stack<int>();
-    stack.Push(1);
-    stack.Push(2);
-    stack.Push(3);
-    stack.Push(4);
+    Queue<int> queue = Queue<int>();
+    queue.Push(1);
+    queue.Push(2);
+    queue.Push(3);
+    queue.Push(4);
+
+    Queue<int> queue1(queue);
+
+    cout << queue;
+    cout << queue1;
+
+//    cin >> queue;
 
 
-//    cout << stack;
+    queue1.Pop();
+    queue1.Pop();
 
-//    cin >> stack;
+    queue.Pop();
+    queue.Push(5);
+    queue.Push(6);
 
-    Stack<int> stack1(stack);
-    stack1.Pop();
-    stack1.Pop();
+    queue1.Push(7);
 
-    stack.Pop();
-    stack.Push(5);
-    stack.Push(6);
+    cout << endl << queue << " " << queue1 << endl;
 
-    stack1.Push(7);
+    queue1 = queue;
+    cout << queue1;
+    queue1.Pop();
+    queue1.Push(100);
+    cout << endl << queue1 << " " << queue << endl;
 
-    cout << endl << stack << " " << stack1 << endl;
-
-    stack1 = stack;
-    stack1.Pop();
-    stack1.Push(100);
-    cout << stack1;
-
-//    cin >> stack1;
-//    stack = Queue<int>();
+//    cin >> queue1;
+//    queue = Queue<int>();
 
 
-//    cout << stack.GetFront() << endl << stack.GetFront() << endl;
-//    cout << stack.Size();
+//    cout << queue.GetFront() << endl << queue.GetFront() << endl;
+//    cout << queue.Size();
 
 
 //    Queue<int> queue = Queue<int>(), queue1;
@@ -50,20 +53,20 @@ int main()
 
 //    queue.Pop();
 //    cout <<  queue << " " << queue.IsEmpty() << " " << queue.Size();
-//    Stack<int> stack = Stack<int>(), stack1;
-//    stack.Push(5);
-//    cout << stack;
+//    Queue<int> queue = Queue<int>(), queue1;
+//    queue.Push(5);
+//    cout << queue;
 //
-////    cin >> stack;
+////    cin >> queue;
 //
-////    cout << endl << stack << " " << stack1 << endl;
+////    cout << endl << queue << " " << queue1 << endl;
 //
-////    cin >> stack1;
-////    stack = Stack<int>();
+////    cin >> queue1;
+////    queue = Queue<int>();
 //
 //
-////    cout << stack.GetFront() << endl << stack.GetFront() << endl;
-////    cout << stack.Size();
+////    cout << queue.GetFront() << endl << queue.GetFront() << endl;
+////    cout << queue.Size();
 //
 //
 //    Queue<int> queue = Queue<int>(), queue1;
