@@ -37,6 +37,42 @@ int main()
     queue1.Push(100);
     cout << endl << queue1 << " " << queue << endl;
 
+
+
+    Stack<int> stack = Stack<int>();
+    stack.Push(1);
+    stack.Push(2);
+    stack.Push(3);
+    stack.Push(4);
+
+    Stack<int> stack1(stack);
+
+    cout << stack;
+    cout << stack1;
+
+//    cin >> stack;
+
+
+    stack1.Pop();
+    stack1.Pop();
+
+    stack.Pop();
+    stack.Push(5);
+    stack.Push(6);
+
+    stack1.Push(7);
+
+    cout << endl << stack << " " << stack1 << endl;
+
+    stack1 = stack;
+    cout << stack1;
+    stack1.Pop();
+    stack1.Push(100);
+    cout << endl << stack1 << " " << stack << endl;
+
+
+
+
 //    cin >> queue1;
 //    queue = Queue<int>();
 

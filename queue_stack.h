@@ -68,6 +68,7 @@ public:
     Stack(const Stack& other);
     Stack(Stack&& other);
 
+    void Clear();
     void Push(const T);
     T Pop();
     T GetFront() const;
@@ -92,13 +93,19 @@ Stack<T>::Stack()
 }
 
 template <class T>
-Stack<T>::~Stack()
+void Stack<T>::Clear()
 {
     while(!this->IsEmpty())
-    {
-        this->Pop();
-    };
-    this->head = nullptr;
+        {
+            this->Pop();
+        };
+        this->head = nullptr;
+}
+
+template <class T>
+Stack<T>::~Stack()
+{
+    this->Clear();
 }
 
 template <class T>
@@ -145,7 +152,7 @@ Stack<T>& Stack<T>::operator =(const Stack<T>& other)
     if(this == &other)
         return *this;
 
-    this->~Stack();
+    this->Clear();
     this->CopyFromOther(other);
     return *this;
 }
@@ -153,7 +160,7 @@ Stack<T>& Stack<T>::operator =(const Stack<T>& other)
 template <class T>
 Stack<T>& Stack<T>::operator =(Stack<T>&& other)
 {
-    this->~Stack();
+    this->Clear();
     this->head = other.head;
     other.head = nullptr;
     return *this;
@@ -236,6 +243,7 @@ public:
     Queue<T>& operator =(const Queue<T>& other);
     Queue<T>& operator =(Queue<T>&& other);
 
+    void Clear();
     void Push(const T);
     T Pop();
     T GetFront() const;
@@ -261,14 +269,20 @@ Queue<T>::Queue()
 }
 
 template <class T>
-Queue<T>::~Queue()
+void Queue<T>::Clear()
 {
     while(!this->IsEmpty())
-    {
-        this->Pop();
-    }
-    this->head = nullptr;
-    this->tail = nullptr;
+        {
+            this->Pop();
+        }
+        this->head = nullptr;
+        this->tail = nullptr;
+}
+
+template <class T>
+Queue<T>::~Queue()
+{
+    this->Clear();
 }
 
 template <class T>
@@ -318,7 +332,7 @@ Queue<T>& Queue<T>::operator =(const Queue<T>& other)
     if(this == &other)
         return *this;
 
-    this->~Queue();
+    this->Clear();
     this->CopyFromOther(other);
     return *this;
 }
@@ -326,7 +340,7 @@ Queue<T>& Queue<T>::operator =(const Queue<T>& other)
 template <class T>
 Queue<T>& Queue<T>::operator =(Queue<T>&& other)
 {
-    this->~Queue();
+    this->Clear();
     this->head = other.head;
     this->tail = other.tail;
     other.head = nullptr;
@@ -358,7 +372,7 @@ template <class T>
 T Queue<T>::Pop()
 {
     if(this->IsEmpty())
-        throw std::length_error("There is no elements in stack.");
+        throw std::length_error("There is no elements in queue.");
 
     T res = this->head->value;
     if(this->head == this->tail)
@@ -380,7 +394,7 @@ template <class T>
 T Queue<T>::GetFront() const
 {
     if(this->IsEmpty())
-        throw std::length_error("There is no elements in stack.");
+        throw std::length_error("There is no elements in queue.");
     return this->head->value;
 }
 
