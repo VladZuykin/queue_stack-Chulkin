@@ -3,6 +3,7 @@
 
 using namespace std;
 
+
 int main()
 {
 
@@ -11,6 +12,21 @@ int main()
     queue.Push(2);
     queue.Push(3);
     queue.Push(4);
+
+    Queue<int>::iterator it = queue.begin();
+    while(it != queue.end())
+    {
+        std::cout << *it << " ";
+        ++it;
+    }
+    std::cout << endl;
+    it = queue.begin();
+    while(it !=  queue.end())
+    {
+        *it += 50;
+        std::cout << *it << " ";
+        ++it;
+    }
 
     Queue<int> queue1(queue);
 
@@ -49,8 +65,6 @@ int main()
 
     cout << stack;
     cout << stack1;
-
-//    cin >> stack;
 
 
     stack1.Pop();

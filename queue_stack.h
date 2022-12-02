@@ -76,6 +76,165 @@ public:
     size_t Size() const;
     Stack<T>& operator =(const Stack<T>& other);
     Stack<T>& operator =(Stack<T>&& other);
+/////////////////////////////////////////////////
+    class const_iterator;
+    class iterator
+    {
+    private:
+        typename OneLinkedList<T>::Node *cur;
+    public:
+
+        iterator(typename OneLinkedList<T>::Node* cur = nullptr)
+        {
+            this->cur = cur;
+        }
+        ~iterator() {};
+
+        T& operator  *() const
+        {
+            return cur->value;
+        }
+        T* operator ->() const
+        {
+            return &cur->value;
+        }
+
+        iterator& operator++()
+        {
+            this->cur = this->cur->next;    // Небезопасная
+            return *this;
+        }
+        iterator operator++(int) // Небезопасная
+        {
+            iterator a = *this;
+            ++*this;
+            return a;
+        }
+
+        iterator operator +(unsigned n) const
+        {
+            if (n == 0)
+                return *this;
+            else if (n > 0)
+            {
+                iterator it2 = *this;
+                for(unsigned int i= 0; i < n; ++i, ++it2);
+                return it2;
+            }
+            else
+            {
+                throw(std::invalid_argument("Stack iterator: sum require positive num."));
+            }
+        }
+
+        iterator& operator += (unsigned n)
+        {
+            return *this + n;
+        }
+        bool operator == (const iterator& it) const
+        {
+            return this->cur == it.cur;
+        }
+        bool operator != (const iterator& it) const
+        {
+            return this->cur != it.cur;
+        }
+
+        friend const_iterator;
+    };
+
+    iterator begin()
+    {
+        return iterator(head);
+    }
+    iterator end()
+    {
+        return nullptr;
+    }
+/////////////////////////////////////////////////////////
+    class const_iterator
+    {
+    private:
+        typename OneLinkedList<T>::Node *cur;
+    public:
+
+        const_iterator(typename OneLinkedList<T>::Node* cur = nullptr)
+        {
+            this->cur = cur;
+        }
+        ~const_iterator() {};
+
+        const T& operator  *() const
+        {
+            return cur->value;
+        }
+        const T* operator ->() const
+        {
+            return &cur->value;
+        }
+
+        const_iterator& operator++()
+        {
+            this->cur = this->cur->next;    // Небезопасная
+            return *this;
+        }
+        const_iterator operator++(int) // Небезопасная
+        {
+            const_iterator a = *this;
+            ++*this;
+            return a;
+        }
+
+        const_iterator operator +(unsigned n) const
+        {
+            if (n == 0)
+                return *this;
+            else if (n > 0)
+            {
+                const_iterator it2 = *this;
+                for(unsigned int i= 0; i < n; ++i, ++it2);
+                return it2;
+            }
+            else
+            {
+                throw(std::invalid_argument("Stack iterator: sum require positive num."));
+            }
+        }
+
+        const_iterator& operator += (unsigned n)
+        {
+            return *this + n;
+        }
+        bool operator == (const const_iterator& it) const
+        {
+            return this->cur == it.cur;
+        }
+        bool operator != (const const_iterator& it) const
+        {
+            return this->cur != it.cur;
+        }
+    };
+/////////////////////////////////////////////////////////
+
+        const_iterator begin() const
+        {
+            return const_iterator(head);
+        }
+        const_iterator end() const
+        {
+            return nullptr;
+        }
+
+        const_iterator cbegin() const
+        {
+            return const_iterator(head);
+        }
+        const_iterator cend() const
+        {
+            return nullptr;
+        }
+
+
 protected:
     void Print() const;
     typename OneLinkedList<T>::Node *head;
@@ -249,6 +408,163 @@ public:
     T GetFront() const;
     bool IsEmpty() const;
     size_t Size() const;
+
+    class const_iterator;
+    class iterator
+    {
+    private:
+        typename OneLinkedList<T>::Node *cur;
+    public:
+
+        iterator(typename OneLinkedList<T>::Node* cur = nullptr)
+        {
+            this->cur = cur;
+        }
+        ~iterator() {};
+
+        T& operator  *() const
+        {
+            return cur->value;
+        }
+        T* operator ->() const
+        {
+            return &cur->value;
+        }
+
+        iterator& operator++()
+        {
+            this->cur = this->cur->next;    // Небезопасная
+            return *this;
+        }
+        iterator operator++(int) // Небезопасная
+        {
+            iterator a = *this;
+            ++*this;
+            return a;
+        }
+
+        iterator operator +(unsigned n) const
+        {
+            if (n == 0)
+                return *this;
+            else if (n > 0)
+            {
+                iterator it2 = *this;
+                for(unsigned int i= 0; i < n; ++i, ++it2);
+                return it2;
+            }
+            else
+            {
+                throw(std::invalid_argument("Stack iterator: sum require positive num."));
+            }
+        }
+
+        iterator& operator += (unsigned n)
+        {
+            return *this + n;
+        }
+        bool operator == (const iterator& it) const
+        {
+            return this->cur == it.cur;
+        }
+        bool operator != (const iterator& it) const
+        {
+            return this->cur != it.cur;
+        }
+
+        friend const_iterator;
+    };
+
+    iterator begin()
+    {
+        return iterator(head);
+    }
+    iterator end()
+    {
+        return nullptr;
+    }
+/////////////////////////////////////////////////////////
+    class const_iterator
+    {
+    private:
+        typename OneLinkedList<T>::Node *cur;
+    public:
+
+        const_iterator(typename OneLinkedList<T>::Node* cur = nullptr)
+        {
+            this->cur = cur;
+        }
+        ~const_iterator() {};
+
+        const T& operator  *() const
+        {
+            return cur->value;
+        }
+        const T* operator ->() const
+        {
+            return &cur->value;
+        }
+
+        const_iterator& operator++()
+        {
+            this->cur = this->cur->next;    // Небезопасная
+            return *this;
+        }
+        const_iterator operator++(int) // Небезопасная
+        {
+            const_iterator a = *this;
+            ++*this;
+            return a;
+        }
+
+        const_iterator operator +(unsigned n) const
+        {
+            if (n == 0)
+                return *this;
+            else if (n > 0)
+            {
+                const_iterator it2 = *this;
+                for(unsigned int i= 0; i < n; ++i, ++it2);
+                return it2;
+            }
+            else
+            {
+                throw(std::invalid_argument("Stack iterator: sum require positive num."));
+            }
+        }
+
+        const_iterator& operator += (unsigned n)
+        {
+            return *this + n;
+        }
+        bool operator == (const const_iterator& it) const
+        {
+            return this->cur == it.cur;
+        }
+        bool operator != (const const_iterator& it) const
+        {
+            return this->cur != it.cur;
+        }
+    };
+/////////////////////////////////////////////////////////
+
+        const_iterator begin() const
+        {
+            return const_iterator(head);
+        }
+        const_iterator end() const
+        {
+            return nullptr;
+        }
+
+        const_iterator cbegin() const
+        {
+            return const_iterator(head);
+        }
+        const_iterator cend() const
+        {
+            return nullptr;
+        }
 
 protected:
     void Print() const;
