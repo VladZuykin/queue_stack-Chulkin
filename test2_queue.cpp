@@ -11,7 +11,7 @@ public:
     numerate(T start = 0, T _shift = 1): seed(start), shift(_shift) {};
     T operator () () {T old = seed; seed += shift; return old; }
 private:
-    T seed, shift;    
+    T seed, shift;
 };
 
 template <class T, class C> T sum (const C& c)
@@ -24,37 +24,37 @@ template <class T, class C> T sum (const C& c)
 
 int main()
 {
-    Queue s1, s2;
-    numerate f(100);
+    Queue<int> s1, s2;
+    numerate<int> f(100);
 
     s1.Push(1);
     s1.Push(2);
     s1.Push(3);
-    
+
     s2.Push(5);
     s2 = s1;
     s2.Push(4);
-    
+
     cout << s1 << endl;          // 1->2->3
     cout << s1.Size() << endl;
-    
+
     cout << s2 << endl;          // 1->2->3->4
     cout << s2.Size() << endl;
-    
+
     swap(s1, s2);
-    
+
     cout << s1 << endl;          // 1->2->3->4
     cout << s1.Size() << endl;
-    
+
     cout << s2 << endl;          // 1->2->3
     cout << s2.Size() << endl;
-    
+
     generate(s1.begin(), s1.end(), f);
 
     cout << s1 << endl;          // 100->101->102->103
     cout << s1.Size() << endl;
-    
-    cout << sum<int,OneLinkedList>(s2) << endl;     // 6
+
+    cout << sum<int,OneLinkedList<int>>(s2) << endl;     // 6
 
     return 0;
 }
