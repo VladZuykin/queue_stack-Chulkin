@@ -20,71 +20,22 @@ public:
     template<class F> friend std::istream& operator >>(std::istream& stream, OneLinkedList<F>& lst);
     template<class F> friend std::ostream& operator <<(std::ostream& stream, const OneLinkedList<F>& lst);
 
-protected:
-    virtual void Print() const = 0;
-    typedef struct link
-    {
-        T value;
-        struct link* next;
-    } Node;
-};
-
-
-template<class T>
-std::istream& operator >>(std::istream& stream, OneLinkedList<T>& lst)
-{
-    size_t n;
-    T value;
-    std::cout << "Please, enter the number of elements." << std::endl;
-    std::cin >> n;
-    std::cout << "Please, input "<< n <<" elements." << std::endl;
-    for(size_t i = 0; i < n; ++i)
-    {
-        std::cin >> value;
-        lst.Push(value);
-    }
-    return stream;
-}
-
-template<class T>
-std::ostream& operator <<(std::ostream& stream, const OneLinkedList<T>& lst)
-{
-    std::cout << "[";
-    lst.Print();
-    std::cout << "]";
-    return stream;
-}
-
-
-// Stack class//
-//////////////////////////////////////////////
-
-template <class T>
-class Stack: public OneLinkedList<T>
-{
-public:
-    Stack();
-    ~Stack();
-    Stack(const Stack& other);
-    Stack(Stack&& other);
-
-    void Clear();
-    void Push(const T);
-    T Pop();
-    T GetFront() const;
-    bool IsEmpty() const;
-    size_t Size() const;
-    Stack<T>& operator =(const Stack<T>& other);
-    Stack<T>& operator =(Stack<T>&& other);
-/////////////////////////////////////////////////
     class const_iterator;
+    class iterator;
+
+    virtual iterator begin() = 0;
+    virtual iterator end() = 0;
+    virtual const_iterator begin() const = 0;
+    virtual const_iterator end() const = 0;
+    virtual const_iterator cbegin() const = 0;
+    virtual const_iterator cend() const = 0;
+
     class iterator
     {
     private:
         typename OneLinkedList<T>::Node *cur;
     public:
-
-        iterator(typename OneLinkedList<T>::Node* cur = nullptr)
+    iterator(typename OneLinkedList<T>::Node* cur = nullptr)
         {
             this->cur = cur;
         }
@@ -140,17 +91,19 @@ public:
             return this->cur != it.cur;
         }
 
+        bool operator == (const const_iterator& it) const
+        {
+            return this->cur == it.cur;
+        }
+
+        bool operator != (const const_iterator& it) const
+        {
+            return this->cur != it.cur;
+        }
+
+
         friend const_iterator;
     };
-
-    iterator begin()
-    {
-        return iterator(head);
-    }
-    iterator end()
-    {
-        return nullptr;
-    }
 /////////////////////////////////////////////////////////
     class const_iterator
     {
@@ -213,8 +166,96 @@ public:
         {
             return this->cur != it.cur;
         }
+
+        bool operator == (const iterator& it) const
+        {
+            return this->cur == it.cur;
+        }
+
+        bool operator != (const iterator& it) const
+        {
+            return this->cur != it.cur;
+        }
     };
+
+protected:
+    typedef struct link
+    {
+        T value;
+        struct link* next;
+    } Node;
+};
+
+
+template<class T>
+std::istream& operator >>(std::istream& stream, OneLinkedList<T>& lst)
+{
+    size_t n;
+    T value;
+    std::cout << "Please, enter the number of elements." << std::endl;
+    std::cin >> n;
+    std::cout << "Please, input "<< n <<" elements." << std::endl;
+    for(size_t i = 0; i < n; ++i)
+    {
+        std::cin >> value;
+        lst.Push(value);
+    }
+    return stream;
+}
+
+template<class T>
+std::ostream& operator <<(std::ostream& stream, const OneLinkedList<T>& lst)
+{
+    std::cout << "[";
+    if(lst.cbegin() != lst.end())
+    {
+
+        std::cout << *lst.cbegin();
+        for(typename OneLinkedList<T>::const_iterator it = ++lst.cbegin(); it != lst.end();++it)
+        {
+            std::cout << " " << *it;
+        }
+    }
+    std::cout << "]";
+    return stream;
+}
+
+
+// Stack class//
+//////////////////////////////////////////////
+
+template <class T>
+class Stack: public OneLinkedList<T>
+{
+public:
+    Stack();
+    ~Stack();
+    Stack(const Stack& other);
+    Stack(Stack&& other);
+
+    void Clear();
+    void Push(const T);
+    T Pop();
+    T GetFront() const;
+    bool IsEmpty() const;
+    size_t Size() const;
+    Stack<T>& operator =(const Stack<T>& other);
+    Stack<T>& operator =(Stack<T>&& other);
+/////////////////////////////////////////////////
+typedef typename OneLinkedList<T>::iterator iterator;
+iterator begin()
+    {
+        return iterator(head);
+    }
+    iterator end()
+    {
+        return nullptr;
+    }
+
+
+
 /////////////////////////////////////////////////////////
+        typedef typename OneLinkedList<T>::const_iterator const_iterator;
 
         const_iterator begin() const
         {
@@ -234,9 +275,7 @@ public:
             return nullptr;
         }
 
-
 protected:
-    void Print() const;
     typename OneLinkedList<T>::Node *head;
 private:
     void CopyFromOther(const Stack<T>& other);
@@ -329,21 +368,6 @@ Stack<T>& Stack<T>::operator =(Stack<T>&& other)
 //////////////////////////////////////////////
 
 template <class T>
-void Stack<T>::Print() const
-{
-    if (this->head)
-    {
-
-        typename OneLinkedList<T>::Node* ptr = this->head;
-        for(; ptr->next; ptr = ptr->next)
-        {
-            std::cout << ptr->value << " ";
-        }
-        std::cout << ptr->value;
-    };
-}
-
-template <class T>
 void Stack<T>::Push(const T value)
 {
     typename OneLinkedList<T>::Node* tmp;
@@ -409,72 +433,7 @@ public:
     bool IsEmpty() const;
     size_t Size() const;
 
-    class const_iterator;
-    class iterator
-    {
-    private:
-        typename OneLinkedList<T>::Node *cur;
-    public:
-
-        iterator(typename OneLinkedList<T>::Node* cur = nullptr)
-        {
-            this->cur = cur;
-        }
-        ~iterator() {};
-
-        T& operator  *() const
-        {
-            return cur->value;
-        }
-        T* operator ->() const
-        {
-            return &cur->value;
-        }
-
-        iterator& operator++()
-        {
-            this->cur = this->cur->next;    // Небезопасная
-            return *this;
-        }
-        iterator operator++(int) // Небезопасная
-        {
-            iterator a = *this;
-            ++*this;
-            return a;
-        }
-
-        iterator operator +(unsigned n) const
-        {
-            if (n == 0)
-                return *this;
-            else if (n > 0)
-            {
-                iterator it2 = *this;
-                for(unsigned int i= 0; i < n; ++i, ++it2);
-                return it2;
-            }
-            else
-            {
-                throw(std::invalid_argument("Stack iterator: sum require positive num."));
-            }
-        }
-
-        iterator& operator += (unsigned n)
-        {
-            return *this + n;
-        }
-        bool operator == (const iterator& it) const
-        {
-            return this->cur == it.cur;
-        }
-        bool operator != (const iterator& it) const
-        {
-            return this->cur != it.cur;
-        }
-
-        friend const_iterator;
-    };
-
+    typedef typename OneLinkedList<T>::iterator iterator;
     iterator begin()
     {
         return iterator(head);
@@ -484,70 +443,7 @@ public:
         return nullptr;
     }
 /////////////////////////////////////////////////////////
-    class const_iterator
-    {
-    private:
-        typename OneLinkedList<T>::Node *cur;
-    public:
-
-        const_iterator(typename OneLinkedList<T>::Node* cur = nullptr)
-        {
-            this->cur = cur;
-        }
-        ~const_iterator() {};
-
-        const T& operator  *() const
-        {
-            return cur->value;
-        }
-        const T* operator ->() const
-        {
-            return &cur->value;
-        }
-
-        const_iterator& operator++()
-        {
-            this->cur = this->cur->next;    // Небезопасная
-            return *this;
-        }
-        const_iterator operator++(int) // Небезопасная
-        {
-            const_iterator a = *this;
-            ++*this;
-            return a;
-        }
-
-        const_iterator operator +(unsigned n) const
-        {
-            if (n == 0)
-                return *this;
-            else if (n > 0)
-            {
-                const_iterator it2 = *this;
-                for(unsigned int i= 0; i < n; ++i, ++it2);
-                return it2;
-            }
-            else
-            {
-                throw(std::invalid_argument("Stack iterator: sum require positive num."));
-            }
-        }
-
-        const_iterator& operator += (unsigned n)
-        {
-            return *this + n;
-        }
-        bool operator == (const const_iterator& it) const
-        {
-            return this->cur == it.cur;
-        }
-        bool operator != (const const_iterator& it) const
-        {
-            return this->cur != it.cur;
-        }
-    };
-/////////////////////////////////////////////////////////
-
+    typedef typename OneLinkedList<T>::const_iterator const_iterator;
         const_iterator begin() const
         {
             return const_iterator(head);
@@ -567,7 +463,6 @@ public:
         }
 
 protected:
-    void Print() const;
     typename OneLinkedList<T>::Node *head, *tail;
 
 private:
@@ -729,21 +624,6 @@ size_t Queue<T>::Size() const
             node = node->next, ++i);
     return i;
 }
-
-template <class T>
-void Queue<T>::Print() const
-{
-    if (this->head)
-    {
-        typename OneLinkedList<T>::Node* ptr = this->head;
-        for(; ptr->next; ptr = ptr->next)
-        {
-            std::cout << ptr->value << " ";
-        }
-        std::cout << ptr->value;
-    };
-}
-
 
 
 #endif // QUEUE_STACK_H_INCLUDED
